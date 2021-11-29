@@ -9,21 +9,24 @@ import math
 import random
 import struct
 from Subnet_def import *
+import sys
 
 
 
 ## Default parameters
-parser = argparse.ArgumentParser(description='Default Parameter Control')
-parser.add_argument('--rsl', '--residual_sample_list', default='../../data/plugin/residual_sample_list.txt', type=str, help='the path of the residual sample list')
-parser.add_argument('--cf', '--clean_feature', default='../../data/plugin/clean_feature.bin', type=str, help='the path of clean feature')
-parser.add_argument('--bs', '--batch_size', default=256, type=int, help='batch size-256')
-parser.add_argument('--fs', '--feature_size', default=256, type=int, help=' the length of feature vector-256')
-parser.add_argument('--its', '--iterations', default=10000, type=int,  help=' the number of total iterations ')
-parser.add_argument('--lr', '--learning_rate', default=1e-3, type=float, help='learning rate')
-parser.add_argument('--mot', '--momentum', default=0.9, type=float, help='momentum')
-parser.add_argument('--wtd', '--weight_decay', default=1e-4, type=float,  help='weight-1e-4)')
+def parse_args(args):
+    parser = argparse.ArgumentParser(description='Default Parameter Control')
+    parser.add_argument('--residual_sample_list', default='../../data/plugin/residual_sample_list.txt', type=str, help='the path of the residual sample list')
+    parser.add_argument('--clean_feature', default='../../data/plugin/clean_feature.bin', type=str, help='the path of clean feature')
+    parser.add_argument('--bs', default=256, type=int, help='batch size-256')
+    parser.add_argument('--fs', default=256, type=int, help=' the length of feature vector-256')
+    parser.add_argument('--its', default=10000, type=int,  help=' the number of total iterations ')
+    parser.add_argument('--lr', default=1e-3, type=float, help='learning rate')
+    parser.add_argument('--mot', default=0.9, type=float, help='momentum')
+    parser.add_argument('--wtd', default=1e-4, type=float,  help='weight-1e-4)')
+    return parser.parse_args(args)
 
-
+args = parse_args(sys.argv[1:])  
 
 def load_sample(sample_path):
     sample_feature = dict()
@@ -97,13 +100,10 @@ class AverValue():                                                              
 
 
 if __name__ == '__main__':
-    args = parser.parse_args()
-    
-
     residual_sample_list_path = args.residual_sample_list
     residual_sample = load_sample(residual_sample_list_path)
     clean_feature_path = args.clean_feature
-    clean_feature = load_feat(clean_feature_path)
+    clean_feature = load_feature(clean_feature_path)
 
     cl_feat_map = np.vstack(clean_feature)                              #creat clean feature map
     model = Res_Subnet(feat_size=256)
@@ -130,7 +130,6 @@ if __name__ == '__main__':
         optimizer.step()
 
         if iter % 100 == 0:                                                                    # print frequency :100 
-            print('Training process: [{0}/{1}]- Loss: {loss.val:.4f} ({loss.avg:.4f})\t'.format(
-                   iter, args.iters, loss=losses))
+            print('Training process: [{0}/{1}]- Loss: {loss.val:.4f} ({loss.avg:.4f})\t'.format(iter, args.iters, loss=losses))
 
     torch.save({'state_dict': model.state_dict()}, '../../data/plugin/plugin_subset.pth')                           # only save params
