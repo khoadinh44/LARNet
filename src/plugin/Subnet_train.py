@@ -77,7 +77,7 @@ def load_batch(residual_sample, cl_feat_map, batch_size, feature_size):
         profile_sele = random.sample(profile_set, 1)                             # randomly pick one profile face from this identity profile faces
         batch_train[i, :] = cl_feat_map[profile_sele[0][2], :]                 # profile feature
         batch_target[i, :] =  np.mean(frontals_feat, axis = 0)                 # frontal face feature (column aver): 256 vector
-        batch_angle[i, :] = Gating_Control(profile_selec[0][1])                # angle -> sin
+        batch_angle[i, :] = Gating_Control(profile_sele[0][1])                # angle -> sin
     return batch_train, batch_target, batch_angle
 
 
