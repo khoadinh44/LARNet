@@ -5,7 +5,7 @@ import math
 
 
 def Gating_Control(angle):                           #Subnet1: The gating control function--|sin()|
-    Gating_Control = abs(sin(angle))
+    Gating_Control = abs(math.sin(angle))
     return Gating_Control
 
 class Res_Subnet(nn.Module):                         #Subnet2: The residual Resnet with 2 FC+ReLU
